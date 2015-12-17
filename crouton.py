@@ -436,7 +436,10 @@ def main():
 						]
 
 						essay_section = driver.find_element_by_xpath('//table[contains(@id, "ACE_NW_CTEC_COMMENTS")]')
-						essay_responses = essay_section.find_element_by_tag_name('p').text.encode('utf-8')
+						try:
+							essay_responses = essay_section.find_element_by_tag_name('p').text.encode('utf-8')
+						except NoSuchElementException:
+							essay_responses = ""
 
 						# Demographic Questions
 						demographic_questions_table = driver.find_element_by_xpath('//div[contains(@id, "win0divNW_CT_PVS_DRV_DESCRLONG")]').find_element_by_tag_name('table')
@@ -503,7 +506,10 @@ def main():
 								for response in rating:
 									line.append(response)
 
-							line.append(re.search(r'(\n\n).*', essay_responses).group(0).strip().replace('"', "'"))
+							if essay_responses:
+								essay_responses = re.search(r'(\n\n).*', essay_responses).group(0).strip().replace('"', "'")
+
+							line.append(essay_responses)
 
 							writer = csv.writer(data, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 							writer.writerow(line)
