@@ -21,7 +21,7 @@ from selenium.webdriver.common.keys import Keys
 script, outfile = argv
 
 delay = 10
-pause = 1
+pause = 4
 
 def get_last_row(csv_filename):
     with open(csv_filename, 'rb') as f:
@@ -149,7 +149,6 @@ def main():
 					"interest_survey_rating_of_four",
 					"interest_survey_rating_of_five",
 					"interest_survey_rating_of_six",
-					"interest_survey_rating_of_one",
 					"interest_survey_response",
 					"interest_survey_average",
 					"essay_responses"
@@ -313,7 +312,11 @@ def main():
 						# ctec_id_xpath = '//tr[@id="{}")]'.format(ctec_id)
 						# wait.until(EC.presence_of_element_located((By.XPATH, ctec_id_xpath)))
 
-						ctec_row = driver.find_element_by_id(ctec_id)
+						try:
+							ctec_row = driver.find_element_by_id(ctec_id)
+						except NoSuchElementException:
+							time.sleep(pause)
+							ctec_row = driver.find_element_by_id(ctec_id)
 
 						ctec_term = ctec_row.find_elements_by_css_selector('.PSEDITBOX_DISPONLY')
 						print "\t\t{}: {}".format(ctec_term[0].text, ctec_term[1].text)
