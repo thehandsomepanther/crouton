@@ -57,7 +57,7 @@ All fields suffixed with `_rating` or `_survey` have multiple fields associated 
 The first three columns, `search_career`, `search_subject`, and `search_course` are just used by crouton to help it navigate through CTECs and pick up where it left off, mostly because of a few quirks in the way CTECs are organized that have to do with courses that have had their names or subjects changed. The same courses (and the same CTECs) can appear multiple times depending on whether their academic subject has been changed (e.g. the Hebrew courses used to be in AAL (Asian and African Languages) and are now in their own subject, HEBREW), so I recommend cleaning this data before using it.
 
 ## Upcoming Features
-
+As of right now, crouton only knows how to either start from the very beginning and scrape every single undergrad CTEC if it's given an empty CSV to fill in or start from the last record of a CSV. I hope soon to incorporate all academic careers and make it possible to specify a range of careers, subjects, and even courses to scrape specifically.
 
 ## Disclaimer
 There are a lot of CTECs (read: A LOT OF CTECs), so this scraper will take a long time to run. It's also very possible (some might even say probable) that your browser will timeout or Selenium will throw a TimeoutException or the world will end or something. Another thing to be aware of is that not every NoSuchElementException is a real exception--sometimes it's just Caesar being slow. Luckily, crouton will be able to detect where you left off if your CSV already has some rows filled in.
