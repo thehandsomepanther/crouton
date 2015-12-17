@@ -39,7 +39,8 @@ def main():
 		with open(outfile, 'r') as data:
 			data_reader = csv.reader(data, delimiter=',', quotechar='"')
 			# making sure the csv isn't just a header row
-			if data_reader.line_num > 1:
+			entries = sum(1 for row in data_reader)
+			if entries > 1:
 				continuing = True
 
 				with open(outfile, 'rb') as csv_file:
@@ -51,7 +52,7 @@ def main():
 					last_ctec = "{} {}-{}-{} {}".format(last_row[5], last_row[7], last_row[8], last_row[9], last_row[10])
 
 				print "Picking up where we left off: {} {}".format(last_term, last_ctec)
-    else:
+	else:
 		with open(outfile, 'a') as data:
 			writer = csv.writer(data, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 			writer.writerow(
