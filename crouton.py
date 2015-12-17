@@ -52,6 +52,111 @@ def main():
 
 		print "Picking up where we left off: {} {}".format(last_term, last_ctec)
 
+	if not continuing:
+		with open(outfile, 'a') as data:
+			writer = csv.writer(data, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+			writer.writerow(
+				[
+					"search_career",
+					"search_subject",
+					"search_course",
+					"academic_quarter",
+					"academic_year",
+					"academic_subject_code",
+					"academic_subject_full",
+					"course_number",
+					"course_subnum",
+					"course_section",
+					"course_name",
+					"instructor",
+					"enrollment_count",
+					"response_count",
+					"instruction_rating_response",
+					"instruction_rating_average",
+					"instruction_rating_of_one_by_percent",
+					"instruction_rating_of_two_by_percent",
+					"instruction_rating_of_three_by_percent",
+					"instruction_rating_of_four_by_percent",
+					"instruction_rating_of_five_by_percent",
+					"instruction_rating_of_six_by_percent",
+					"course_rating_response",
+					"course_rating_average",
+					"course_rating_of_one_by_percent",
+					"course_rating_of_two_by_percent",
+					"course_rating_of_three_by_percent",
+					"course_rating_of_four_by_percent",
+					"course_rating_of_five_by_percent",
+					"course_rating_of_six_by_percent",
+					"learned_rating_response",
+					"learned_rating_average",
+					"learned_rating_of_one_by_percent",
+					"learned_rating_of_two_by_percent",
+					"learned_rating_of_three_by_percent",
+					"learned_rating_of_four_by_percent",
+					"learned_rating_of_five_by_percent",
+					"learned_rating_of_six_by_percent",
+					"challenging_rating_response",
+					"challenging_rating_average",
+					"challenging_rating_of_one_by_percent",
+					"challenging_rating_of_two_by_percent",
+					"challenging_rating_of_three_by_percent",
+					"challenging_rating_of_four_by_percent",
+					"challenging_rating_of_five_by_percent",
+					"challenging_rating_of_six_by_percent",
+					"stimulating_rating_response",
+					"stimulating_rating_average",
+					"stimulating_rating_of_one_by_percent",
+					"stimulating_rating_of_two_by_percent",
+					"stimulating_rating_of_three_by_percent",
+					"stimulating_rating_of_four_by_percent",
+					"stimulating_rating_of_five_by_percent",
+					"stimulating_rating_of_six_by_percent",
+					"time_rating_response",
+					"time_rating_of_less_than_three",
+					"time_rating_of_four_to_seven",
+					"time_rating_of_eight_to_eleven",
+					"time_rating_of_twelve_to_fifteen",
+					"time_rating_of_sixteen_to_nineteen",
+					"time_rating_of_more_than_twenty",
+					"school_survey_sesp",
+					"school_survey_comm",
+					"school_survey_grad",
+					"school_survey_kgsm",
+					"school_survey_mccormick",
+					"school_survey_medill",
+					"school_survey_music",
+					"school_survey_summer",
+					"school_survey_scs",
+					"school_survey_wcas",
+					"school_survey_response",
+					"class_survey_freshman",
+					"class_survey_sophomore",
+					"class_survey_junior",
+					"class_survey_senior",
+					"class_survey_grad",
+					"class_survey_other",
+					"class_survey_response",
+					"reason_survey_distro",
+					"reason_survey_major",
+					"reason_survey_minor",
+					"reason_survey_elective",
+					"reason_survey_other",
+					"reason_survey_none",
+					"reason_survey_response",
+					"interest_survey_rating_of_one",
+					"interest_survey_rating_of_two",
+					"interest_survey_rating_of_three",
+					"interest_survey_rating_of_four",
+					"interest_survey_rating_of_five",
+					"interest_survey_rating_of_six",
+					"interest_survey_rating_of_one",
+					"interest_survey_response",
+					"interest_survey_average",
+					"essay_responses"
+				]
+			)
+
+
 	print "Logging into Caesar"
 
 	# logging in to caesar
@@ -79,9 +184,9 @@ def main():
 	if continuing:
 		current_career = last_career
 
-	print "Filtering by {} classes".format(current_career)
+	print "Filtering by {} courses".format(current_career)
 
-	# selecting undergrad classes
+	# selecting undergrad courses
 	# for some reason sometimes it can't find the academic career dropdown
 	try:
 		academic_career = driver.find_element_by_css_selector('#NW_CT_PB_SRCH_ACAD_CAREER')
@@ -141,38 +246,38 @@ def main():
 		search_button = driver.find_element_by_css_selector('#NW_CT_PB_SRCH_SRCH_BTN')
 		search_button.click()
 
-		print "Looking at {} classes".format(subject)
+		print "Looking at {} courses".format(subject)
 		current_subject = subject
 
 		time.sleep(pause)
 
-		subject_classes_table = driver.find_element_by_css_selector("[id^='NW_CT_PV_DRV']")
-		subject_classes = subject_classes_table.find_elements_by_css_selector('[id^="trNW_CT_PV_DRV"]')
+		subject_courses_table = driver.find_element_by_css_selector("[id^='NW_CT_PV_DRV']")
+		subject_courses = subject_courses_table.find_elements_by_css_selector('[id^="trNW_CT_PV_DRV"]')
 
-		subject_classes_list = []
+		subject_courses_list = []
 
 		last_row_found = False
 
-		for subject_class in subject_classes:
-			current_class = subject_class.find_element_by_css_selector('.PSEDITBOX_DISPONLY').text
+		for subject_course in subject_courses:
+			current_course = subject_course.find_element_by_css_selector('.PSEDITBOX_DISPONLY').text
 
 			if continuing:
-				if last_course == current_class:
+				if last_course == current_course:
 					last_row_found = True
 			if not continuing or last_row_found:
-				subject_classes_list.append(subject_class.get_attribute('id'))
+				subject_courses_list.append(subject_course.get_attribute('id'))
 
-		for subject_class_row in subject_classes_list:
+		for subject_course_row in subject_courses_list:
 			time.sleep(pause)
 
-			subject_class = driver.find_element_by_id(subject_class_row)
+			subject_course = driver.find_element_by_id(subject_course_row)
 
-			class_search_title = subject_class.find_element_by_css_selector('.PSEDITBOX_DISPONLY').text
-			print "\t{}".format(class_search_title)
+			course_search_title = subject_course.find_element_by_css_selector('.PSEDITBOX_DISPONLY').text
+			print "\t{}".format(course_search_title)
 
 			time.sleep(pause)
 
-			ctecs_list_link = subject_class.find_element_by_tag_name('a')
+			ctecs_list_link = subject_course.find_element_by_tag_name('a')
 			ctecs_list_link.click()
 
 			time.sleep(pause)
@@ -225,7 +330,7 @@ def main():
 						# will change this to include all careers
 						search_career = "UGRD"
 						search_subject = subject
-						search_course = class_search_title
+						search_course = course_search_title
 
 						course_vitals = driver.find_elements_by_css_selector('.PSEDITBOX_DISPONLY')
 
@@ -240,17 +345,17 @@ def main():
 						academic_subject_full = re.search(r'\s.*', academic_subject).group().strip()
 
 						# # e.g. 111-2-20 Hebrew I
-						class_title = course_vitals[2].text
-						class_full_number = re.match(r'\S*', class_title).group(0).split('-')
-						class_number = class_full_number[0]
-						class_subnum = class_full_number[1]
-						class_section = class_full_number[2]
-						class_name = re.search(r'\s(.*)', class_title).group().strip()
+						course_title = course_vitals[2].text
+						course_full_number = re.match(r'\S*', course_title).group(0).split('-')
+						course_number = course_full_number[0]
+						course_subnum = course_full_number[1]
+						course_section = course_full_number[2]
+						course_name = re.search(r'\s(.*)', course_title).group().strip()
 
 						# e.g. Sarah Silverman
 						instructor = course_vitals[3].text
 
-						# number of peple who took the class
+						# number of peple who took the course
 						enrollment_count = int(course_vitals[4].text)
 
 						# number of people who filled out the CTEC
@@ -309,7 +414,7 @@ def main():
 							elif i == 4:
 								stimulating_rating = question_ratings
 
-						# Estimate the average number of hours per week you spent on this course outside of class and lab time
+						# Estimate the average number of hours per week you spent on this course outside of course and lab time
 						time_survey = core_questions[5].find_element_by_tag_name('tr').find_elements_by_tag_name('td')
 						time_survey_ratings = time_survey[0].find_elements_by_xpath('*')[1].find_elements_by_tag_name('div')
 						time_rating_of_less_than_three = float(time_survey_ratings[0].text[:-1]) / 100
@@ -320,14 +425,14 @@ def main():
 						time_rating_of_more_than_twenty = float(time_survey_ratings[5].text[:-1]) / 100
 						time_rating_response = int(re.match(r'\S*', time_survey[1].find_element_by_tag_name('font').text).group(0))
 
-						time_ratings = [
+						time_rating = [
+							time_rating_response,
 							time_rating_of_less_than_three,
 							time_rating_of_four_to_seven,
 							time_rating_of_eight_to_eleven,
 							time_rating_of_twelve_to_fifteen,
 							time_rating_of_sixteen_to_nineteen,
-							time_rating_of_more_than_twenty,
-							time_rating_response
+							time_rating_of_more_than_twenty
 						]
 
 						essay_section = driver.find_element_by_xpath('//table[contains(@id, "ACE_NW_CTEC_COMMENTS")]')
@@ -370,7 +475,7 @@ def main():
 								learned_rating,
 								challenging_rating,
 								stimulating_rating,
-								time_ratings,
+								time_rating,
 								school_survey,
 								class_survey,
 								reason_survey,
@@ -385,10 +490,10 @@ def main():
 								academic_year,
 								academic_subject_code,
 								academic_subject_full,
-								class_number,
-								class_subnum,
-								class_section,
-								class_name,
+								course_number,
+								course_subnum,
+								course_section,
+								course_name,
 								instructor,
 								enrollment_count,
 								response_count
@@ -420,9 +525,9 @@ def main():
 
 						time.sleep(pause)
 
-						subject_class = driver.find_element_by_id(subject_class_row)
+						subject_course = driver.find_element_by_id(subject_course_row)
 
-						ctecs_list_link = subject_class.find_element_by_tag_name('a')
+						ctecs_list_link = subject_course.find_element_by_tag_name('a')
 						ctecs_list_link.click()
 
 						break
