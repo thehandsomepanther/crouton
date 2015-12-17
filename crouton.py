@@ -23,9 +23,6 @@ script, outfile = argv
 delay = 10
 pause = 1
 
-# netid = raw_input("NetID: ")
-# password = getpass.getpass()
-
 def get_last_row(csv_filename):
     with open(csv_filename, 'rb') as f:
         return deque(csv.reader(f), 1)[0]
