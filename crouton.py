@@ -24,8 +24,8 @@ delay = 10
 pause = 4
 
 def get_last_row(csv_filename):
-    with open(csv_filename, 'rb') as f:
-        return deque(csv.reader(f), 1)[0]
+	with open(csv_filename, 'rb') as f:
+		return deque(csv.reader(f), 1)[0]
 
 def main():
 	driver = webdriver.Firefox()
@@ -438,8 +438,8 @@ def main():
 							time_rating_of_more_than_twenty
 						]
 
-						essay_section = driver.find_element_by_xpath('//table[contains(@id, "ACE_NW_CTEC_COMMENTS")]')
 						try:
+							essay_section = driver.find_element_by_xpath('//table[contains(@id, "ACE_NW_CTEC_COMMENTS")]')
 							essay_responses = essay_section.find_element_by_tag_name('p').text.encode('utf-8')
 						except NoSuchElementException:
 							essay_responses = ""
