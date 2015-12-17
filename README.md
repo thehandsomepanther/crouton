@@ -2,7 +2,7 @@
 This is a web scraper for Northwestern University's Course and Teacher Evaluations, known as CTECs (I don't know what that last "C" stands for either), located in Caesar, their student portal.
 
 ## Getting Started
-Crouton takes in a CSV file as an input, as this is where it will export all CTEC information. I recommend just creating one in the root directory of this project (aka the only directory) but this scraper was made in `100% FREE COUNTRY USA OF AMERICA STATES` so you can do whatever you want I guess. To run crouton from your terminal, simply type
+Crouton takes in a CSV file as an input, as this is where it will export all CTEC information. I recommend just creating one in the root directory of this project (aka the only directory) but this scraper was made in 🇺🇸 `100% FREE COUNTRY USA OF AMERICA STATES` 🇺🇸 so you can do whatever you want I guess. To run crouton from your terminal, simply type
 
 ```
 python crouton.py crouton.csv
