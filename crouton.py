@@ -8,8 +8,6 @@ from collections import deque
 
 from credentials import *
 
-from bs4 import BeautifulSoup
-
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -30,8 +28,6 @@ def get_last_row(csv_filename):
 def main():
 	driver = webdriver.Firefox()
 	driver.get('http://www.northwestern.edu/caesar/')
-	html = driver.page_source
-	soup = BeautifulSoup(html, 'html.parser')
 
 	wait = WebDriverWait(driver, delay)
 
@@ -40,19 +36,22 @@ def main():
  	continuing = False
 
 	if os.stat(outfile).st_size > 0:
-		continuing = True
+		with open(outfile, 'r') as data:
+			data_reader = csv.reader(data, delimiter=',', quotechar='"')
+			# making sure the csv isn't just a header row
+			if data_reader.line_num > 1:
+				continuing = True
 
-		with open(outfile, 'rb') as csv_file:
-			last_row = get_last_row(outfile)
-			last_career = last_row[0]
-			last_subject = last_row[1]
-			last_course = last_row[2]
-			last_term = "{} {}".format(last_row[4], last_row[3])
-			last_ctec = "{} {}-{}-{} {}".format(last_row[5], last_row[7], last_row[8], last_row[9], last_row[10])
+				with open(outfile, 'rb') as csv_file:
+					last_row = get_last_row(outfile)
+					last_career = last_row[0]
+					last_subject = last_row[1]
+					last_course = last_row[2]
+					last_term = "{} {}".format(last_row[4], last_row[3])
+					last_ctec = "{} {}-{}-{} {}".format(last_row[5], last_row[7], last_row[8], last_row[9], last_row[10])
 
-		print "Picking up where we left off: {} {}".format(last_term, last_ctec)
-
-	if not continuing:
+				print "Picking up where we left off: {} {}".format(last_term, last_ctec)
+    else:
 		with open(outfile, 'a') as data:
 			writer = csv.writer(data, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 			writer.writerow(
@@ -233,9 +232,6 @@ def main():
 		# a very jank way to get the driver to iterate over each subject.
 		time.sleep(pause)
 
-		html = driver.page_source
-		soup = BeautifulSoup(html, 'html.parser')
-
 		academic_subjects = driver.find_element_by_css_selector('#NW_CT_PB_SRCH_SUBJECT')
 		subject_select = Select(academic_subjects)
 		subject_select.select_by_value(subject)
@@ -281,9 +277,6 @@ def main():
 
 			time.sleep(pause)
 
-			html = driver.page_source
-			soup = BeautifulSoup(html, 'html.parser')
-
 			ctecs_table = driver.find_element_by_css_selector("[id^='NW_CT_PV4_DRV']")
 			ctecs = ctecs_table.find_elements_by_css_selector('[id^="trNW_CT_PV4_DRV"]')
 
@@ -296,7 +289,8 @@ def main():
 				current_ctec = ctec.find_elements_by_tag_name('td')[1].text
 
 				if not continuing or last_ctec_found:
-					ctecs_list.append(ctec.get_attribute('id'))
+					if current_subject in current_ctec:
+						ctecs_list.append(ctec.get_attribute('id'))
 
 				if continuing:
 					if last_ctec == current_ctec and last_term == current_term:
@@ -331,7 +325,7 @@ def main():
 						#
 
 						# will change this to include all careers
-						search_career = "UGRD"
+						search_career = current_career
 						search_subject = subject
 						search_course = course_search_title
 
@@ -546,6 +540,7 @@ def main():
 						print "\t\t\tOops! A little hiccup"
 						pass
 
+	print "That's all folks!"
 	driver.quit()
 
 main()
