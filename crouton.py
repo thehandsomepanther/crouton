@@ -39,7 +39,13 @@ def main():
 		with open(outfile, 'r') as data:
 			data_reader = csv.reader(data, delimiter=',', quotechar='"')
 			# making sure the csv isn't just a header row
-			entries = sum(1 for row in data_reader)
+			entries = 0
+
+			for row in data:
+				entries += 1
+				if entries > 1:
+					break
+
 			if entries > 1:
 				continuing = True
 
