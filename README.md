@@ -1,5 +1,5 @@
 # crouton
-This is a web scraper for Northwestern University's Course and Teacher Evaluations, known as CTECs (I don't know what that last "C" stands for either).
+This is a web scraper for Northwestern University's Course and Teacher Evaluations, known as CTECs (I don't know what that last "C" stands for either), located in Caesar, their student portal.
 
 ## Getting Started
 Crouton takes in a CSV file as an input, as this is where it will export all CTEC information. I recommend just creating one in the root directory of this project (aka the only directory) but this scraper was made in `100% FREE COUNTRY USA OF AMERICA STATES` so you can do whatever you want I guess. To run crouton from your terminal, simply type
@@ -22,4 +22,4 @@ password = "P4$$.w0rd"
 ## Disclaimer
 There are a lot of CTECs (read: A LOT OF CTECs), so this scraper will take a long time to run. It's also very possible (some might even say probable) that your browser will timeout or Selenium will throw a TimeoutException or the world will end or something. So just be aware of that and know that not every NoSuchElementException is a real exception--sometimes it's just Caesar being slow. Luckily, crouton will be able to detect where you left off if your CSV already has some rows filled in.
 
-This is still a work in progress. If you run into any issues please create a new issue and let me know exactly what's going on and how I can reproduce what happened.
+This is still a work in progress. If you run into any issues please create a new issue and let me know what's going on and how I can reproduce what happened.
