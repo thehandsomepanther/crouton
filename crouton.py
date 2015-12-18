@@ -390,6 +390,8 @@ def main():
 									question_rating_of_one_by_percent = float(question_rating_numbers[5].text[:-1]) / 100
 								except ValueError:
 									# no response
+									question_rating_response = "null"
+									question_rating_average = "null"
 									question_rating_of_six_by_percent = "null"
 									question_rating_of_five_by_percent = "null"
 									question_rating_of_four_by_percent = "null"
@@ -421,14 +423,23 @@ def main():
 
 							# Estimate the average number of hours per week you spent on this course outside of course and lab time
 							time_survey = core_questions[5].find_element_by_tag_name('tr').find_elements_by_tag_name('td')
-							time_survey_ratings = time_survey[0].find_elements_by_xpath('*')[1].find_elements_by_tag_name('div')
-							time_rating_of_less_than_three = float(time_survey_ratings[0].text[:-1]) / 100
-							time_rating_of_four_to_seven = float(time_survey_ratings[1].text[:-1]) / 100
-							time_rating_of_eight_to_eleven = float(time_survey_ratings[2].text[:-1]) / 100
-							time_rating_of_twelve_to_fifteen = float(time_survey_ratings[3].text[:-1]) / 100
-							time_rating_of_sixteen_to_nineteen = float(time_survey_ratings[4].text[:-1]) / 100
-							time_rating_of_more_than_twenty = float(time_survey_ratings[5].text[:-1]) / 100
-							time_rating_response = int(re.match(r'\S*', time_survey[1].find_element_by_tag_name('font').text).group(0))
+							try:
+								time_survey_ratings = time_survey[0].find_elements_by_xpath('*')[1].find_elements_by_tag_name('div')
+								time_rating_of_less_than_three = float(time_survey_ratings[0].text[:-1]) / 100
+								time_rating_of_four_to_seven = float(time_survey_ratings[1].text[:-1]) / 100
+								time_rating_of_eight_to_eleven = float(time_survey_ratings[2].text[:-1]) / 100
+								time_rating_of_twelve_to_fifteen = float(time_survey_ratings[3].text[:-1]) / 100
+								time_rating_of_sixteen_to_nineteen = float(time_survey_ratings[4].text[:-1]) / 100
+								time_rating_of_more_than_twenty = float(time_survey_ratings[5].text[:-1]) / 100
+								time_rating_response = int(re.match(r'\S*', time_survey[1].find_element_by_tag_name('font').text).group(0))
+							except IndexError:
+								time_rating_of_less_than_three = "null"
+								time_rating_of_four_to_seven = "null"
+								time_rating_of_eight_to_eleven = "null"
+								time_rating_of_twelve_to_fifteen = "null"
+								time_rating_of_sixteen_to_nineteen = "null"
+								time_rating_of_more_than_twenty = "null"
+								time_rating_response = "null"
 
 							time_rating = [
 								time_rating_response,
