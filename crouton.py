@@ -527,12 +527,9 @@ def main():
 							academic_career = driver.find_element_by_css_selector('#NW_CT_PB_SRCH_ACAD_CAREER')
 							Select(academic_career).select_by_value(current_career)
 
-							time.sleep(pause)
-
 							academic_subjects = driver.find_element_by_css_selector('#NW_CT_PB_SRCH_SUBJECT')
 
-							subject_select = Select(academic_subjects)
-							subject_select.select_by_value(subject)
+							subject_select = Select(academic_subjects).select_by_value(subject)
 
 							time.sleep(pause)
 
@@ -555,10 +552,10 @@ def main():
 
 		print "That's all folks!"
 		driver.quit()
-	# except NoSuchElementException:
-	# 	print "Oops! I couldn't find something. Restarting..."
-	# 	driver.quit()
-	# 	main()
+	except NoSuchElementException:
+		print "Oops! I couldn't find something. Restarting..."
+		driver.quit()
+		main()
 	except TimeoutException:
 		print "Oops! That's taking a little long to load. Restarting..."
 		driver.quit()
