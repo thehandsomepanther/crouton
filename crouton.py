@@ -56,7 +56,7 @@ def main():
 						last_subject = last_row[1]
 						last_course = last_row[2]
 						last_term = "{} {}".format(last_row[4], last_row[3])
-						last_ctec = "{} {}-{}-{} {}".format(last_row[5], last_row[7], last_row[8], last_row[9], last_row[10])
+						last_ctec = "{} {}-{}-{} {}".format(last_row[5], last_row[7], last_row[8], last_row[9], last_row[10]).replace(":", "")
 
 					print "Picking up where we left off: {} {}".format(last_term, last_ctec)
 		else:
