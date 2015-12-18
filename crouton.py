@@ -538,8 +538,9 @@ def main():
 							academic_career = driver.find_element_by_css_selector('#NW_CT_PB_SRCH_ACAD_CAREER')
 							Select(academic_career).select_by_value(current_career)
 
-							academic_subjects = driver.find_element_by_css_selector('#NW_CT_PB_SRCH_SUBJECT')
+							time.sleep(pause)
 
+							academic_subjects = driver.find_element_by_css_selector('#NW_CT_PB_SRCH_SUBJECT')
 							subject_select = Select(academic_subjects).select_by_value(subject)
 
 							time.sleep(pause)
