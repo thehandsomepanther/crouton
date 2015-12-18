@@ -19,7 +19,7 @@ from selenium.webdriver.common.keys import Keys
 script, outfile = argv
 
 delay = 10
-pause = 2
+pause = 4
 
 def get_last_row(csv_filename):
 	with open(csv_filename, 'rb') as f:
@@ -524,6 +524,11 @@ def main():
 
 							time.sleep(pause)
 
+							academic_career = driver.find_element_by_css_selector('#NW_CT_PB_SRCH_ACAD_CAREER')
+							Select(academic_career).select_by_value(current_career)
+
+							time.sleep(pause)
+
 							academic_subjects = driver.find_element_by_css_selector('#NW_CT_PB_SRCH_SUBJECT')
 
 							subject_select = Select(academic_subjects)
@@ -550,10 +555,10 @@ def main():
 
 		print "That's all folks!"
 		driver.quit()
-	except NoSuchElementException:
-		print "Oops! I couldn't find something. Restarting..."
-		driver.quit()
-		main()
+	# except NoSuchElementException:
+	# 	print "Oops! I couldn't find something. Restarting..."
+	# 	driver.quit()
+	# 	main()
 	except TimeoutException:
 		print "Oops! That's taking a little long to load. Restarting..."
 		driver.quit()
