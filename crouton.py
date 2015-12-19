@@ -13,6 +13,7 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
@@ -320,8 +321,8 @@ def main():
 								time.sleep(pause)
 								ctec_row = driver.find_element_by_id(ctec_id)
 
-							ctec_term = ctec_row.find_elements_by_css_selector('.PSEDITBOX_DISPONLY')
-							print "\t\t{}: {}".format(ctec_term[0].text, ctec_term[1].text)
+							ctec_info = ctec_row.find_elements_by_css_selector('.PSEDITBOX_DISPONLY')
+							print "\t\t{}: {}".format(ctec_info[0].text, ctec_info[1].text.encode('ascii','ignore'))
 
 							ctec_link = ctec_row.find_element_by_tag_name('a')
 							ctec_link.click()
@@ -349,7 +350,7 @@ def main():
 							academic_subject_full = re.search(r'\s.*', academic_subject).group().strip()
 
 							# # e.g. 111-2-20 Hebrew I
-							course_title = course_vitals[2].text
+							course_title = course_vitals[2].text.encode('utf-8')
 							course_full_number = re.match(r'\S*', course_title).group(0).split('-')
 							course_number = course_full_number[0]
 							course_subnum = course_full_number[1]
