@@ -340,9 +340,9 @@ def main():
 							course_vitals = driver.find_elements_by_css_selector('.PSEDITBOX_DISPONLY')
 
 							# # e.g. Fall 2010
-							academic_term = course_vitals[0].text
-							academic_quarter = academic_term.split(' ')[0]
-							academic_year = academic_term.split(' ')[1]
+							academic_term = course_vitals[0].text.split(' ')
+							academic_quarter = academic_term[0]
+							academic_year = academic_term[1]
 
 							# # e.g. HEBREW Hebrew
 							academic_subject = course_vitals[1].text
@@ -422,8 +422,8 @@ def main():
 									stimulating_rating = question_ratings
 
 							# Estimate the average number of hours per week you spent on this course outside of course and lab time
-							time_survey = core_questions[5].find_element_by_tag_name('tr').find_elements_by_tag_name('td')
 							try:
+								time_survey = core_questions[5].find_element_by_tag_name('tr').find_elements_by_tag_name('td')
 								time_survey_ratings = time_survey[0].find_elements_by_xpath('*')[1].find_elements_by_tag_name('div')
 								time_rating_of_less_than_three = float(time_survey_ratings[0].text[:-1]) / 100
 								time_rating_of_four_to_seven = float(time_survey_ratings[1].text[:-1]) / 100
