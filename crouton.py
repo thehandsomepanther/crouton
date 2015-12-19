@@ -126,6 +126,8 @@ def get_last_row(csv_filename):
 
 def main():
 	try:
+		timeouts = 0
+
 		driver = webdriver.Firefox()
 		driver.get('http://www.northwestern.edu/caesar/')
 
@@ -370,12 +372,22 @@ def main():
 							core_questions_table = driver.find_element_by_xpath('//table[contains(@id, "ACE_NW_CTEC_M_QUESTION")]')
 							core_questions = core_questions_table.find_elements_by_tag_name('table')
 
-							for i in range(len(core_questions) - 1):
-								question_sections = core_questions[i].find_elements_by_tag_name('tr')
-
-								question_rating_response_average = question_sections[0].find_elements_by_tag_name('td')
+							# initialize all responses to null in case there are no multiple choice questions
+							# previously for i in range(len(core_questions) - 1)
+							for i in range (0, 5):
+								question_rating_response = "null"
+								question_rating_average = "null"
+								question_rating_of_six_by_percent = "null"
+								question_rating_of_five_by_percent = "null"
+								question_rating_of_four_by_percent = "null"
+								question_rating_of_three_by_percent = "null"
+								question_rating_of_two_by_percent = "null"
+								question_rating_of_one_by_percent = "null"
 
 								try:
+									question_sections = core_questions[i].find_elements_by_tag_name('tr')
+									question_rating_response_average = question_sections[0].find_elements_by_tag_name('td')
+
 									question_rating_response = int(re.match(r'\S*', question_rating_response_average[1].find_element_by_tag_name('font').text).group(0))
 									question_rating_average = float(re.search(r'\s(\d*\.?\d*)$', question_rating_response_average[1].find_element_by_tag_name('font').text).group(0).strip())
 
@@ -390,14 +402,11 @@ def main():
 									question_rating_of_one_by_percent = float(question_rating_numbers[5].text[:-1]) / 100
 								except ValueError:
 									# no response
-									question_rating_response = "null"
-									question_rating_average = "null"
-									question_rating_of_six_by_percent = "null"
-									question_rating_of_five_by_percent = "null"
-									question_rating_of_four_by_percent = "null"
-									question_rating_of_three_by_percent = "null"
-									question_rating_of_two_by_percent = "null"
-									question_rating_of_one_by_percent = "null"
+									pass
+								except NoSuchElementException:
+									pass
+								except IndexError:
+									pass
 
 								question_ratings = [
 									question_rating_response,
@@ -558,6 +567,13 @@ def main():
 							break
 
 						except TimeoutException:
+							timeouts += 1
+
+							if timeouts > 9:
+								print "Hm. Something's not working. Let's try again."
+								driver.quit()
+								main()
+
 							time.sleep(pause)
 							print "\t\t\tOops! A little hiccup"
 							pass
