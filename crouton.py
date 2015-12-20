@@ -7,6 +7,7 @@ import csv
 from collections import deque
 
 from credentials import *
+from header import *
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select, WebDriverWait
@@ -22,107 +23,82 @@ script, outfile = argv
 delay = 10
 pause = 2
 
-header = [
-	"search_career",
-	"search_subject",
-	"search_course",
-	"academic_quarter",
-	"academic_year",
-	"academic_subject_code",
-	"academic_subject_full",
-	"course_number",
-	"course_subnum",
-	"course_section",
-	"course_name",
-	"instructor",
-	"enrollment_count",
-	"response_count",
-	"instruction_rating_response",
-	"instruction_rating_average",
-	"instruction_rating_of_one_by_percent",
-	"instruction_rating_of_two_by_percent",
-	"instruction_rating_of_three_by_percent",
-	"instruction_rating_of_four_by_percent",
-	"instruction_rating_of_five_by_percent",
-	"instruction_rating_of_six_by_percent",
-	"course_rating_response",
-	"course_rating_average",
-	"course_rating_of_one_by_percent",
-	"course_rating_of_two_by_percent",
-	"course_rating_of_three_by_percent",
-	"course_rating_of_four_by_percent",
-	"course_rating_of_five_by_percent",
-	"course_rating_of_six_by_percent",
-	"learned_rating_response",
-	"learned_rating_average",
-	"learned_rating_of_one_by_percent",
-	"learned_rating_of_two_by_percent",
-	"learned_rating_of_three_by_percent",
-	"learned_rating_of_four_by_percent",
-	"learned_rating_of_five_by_percent",
-	"learned_rating_of_six_by_percent",
-	"challenging_rating_response",
-	"challenging_rating_average",
-	"challenging_rating_of_one_by_percent",
-	"challenging_rating_of_two_by_percent",
-	"challenging_rating_of_three_by_percent",
-	"challenging_rating_of_four_by_percent",
-	"challenging_rating_of_five_by_percent",
-	"challenging_rating_of_six_by_percent",
-	"stimulating_rating_response",
-	"stimulating_rating_average",
-	"stimulating_rating_of_one_by_percent",
-	"stimulating_rating_of_two_by_percent",
-	"stimulating_rating_of_three_by_percent",
-	"stimulating_rating_of_four_by_percent",
-	"stimulating_rating_of_five_by_percent",
-	"stimulating_rating_of_six_by_percent",
-	"time_rating_response",
-	"time_rating_of_less_than_three",
-	"time_rating_of_four_to_seven",
-	"time_rating_of_eight_to_eleven",
-	"time_rating_of_twelve_to_fifteen",
-	"time_rating_of_sixteen_to_nineteen",
-	"time_rating_of_more_than_twenty",
-	"school_survey_sesp",
-	"school_survey_comm",
-	"school_survey_grad",
-	"school_survey_kgsm",
-	"school_survey_mccormick",
-	"school_survey_medill",
-	"school_survey_music",
-	"school_survey_summer",
-	"school_survey_scs",
-	"school_survey_wcas",
-	"school_survey_response",
-	"class_survey_freshman",
-	"class_survey_sophomore",
-	"class_survey_junior",
-	"class_survey_senior",
-	"class_survey_grad",
-	"class_survey_other",
-	"class_survey_response",
-	"reason_survey_distro",
-	"reason_survey_major",
-	"reason_survey_minor",
-	"reason_survey_elective",
-	"reason_survey_other",
-	"reason_survey_none",
-	"reason_survey_response",
-	"interest_survey_rating_of_one",
-	"interest_survey_rating_of_two",
-	"interest_survey_rating_of_three",
-	"interest_survey_rating_of_four",
-	"interest_survey_rating_of_five",
-	"interest_survey_rating_of_six",
-	"interest_survey_response",
-	"interest_survey_average",
-	"essay_responses"
-]
-
 def get_last_row(csv_filename):
 	with open(csv_filename, 'rb') as f:
 		return deque(csv.reader(f), 1)[0]
+
+def get_continuing(outfile):
+	continuing = False
+
+	if os.stat(outfile).st_size > 0:
+		with open(outfile, 'r') as data:
+			data_reader = csv.reader(data, delimiter=',', quotechar='"')
+			# making sure the csv isn't just a header row
+			entries = 0
+
+			for row in data:
+				entries += 1
+				if entries > 1:
+					break
+
+			if entries > 1:
+				return True
+	else:
+		write_header(outfile)
+
+def write_header(outfile):
+	with open(outfile, 'a') as data:
+		writer = csv.writer(data, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+		writer.writerow(header)
+
+def get_subject_list(subjects, continuing, last_subject):
+	subject_list = []
+
+	for subject in subjects:
+		subject_list.append(subject.get_attribute('value'))
+
+	# gets rid of the first select value, which is an empty entry
+	subject_list.pop(0)
+
+	if continuing:
+		while subject_list[0] != last_subject:
+			subject_list.pop(0)
+
+	return subject_list
+
+def get_course_list(subject_courses, continuing, last_course):
+	subject_courses_list = []
+	last_row_found = False
+
+	for subject_course in subject_courses:
+		current_course = subject_course.find_element_by_css_selector('.PSEDITBOX_DISPONLY').text
+
+		if continuing:
+			if last_course == current_course:
+				last_row_found = True
+		if not continuing or last_row_found:
+			subject_courses_list.append(subject_course.get_attribute('id'))
+
+	return subject_courses_list
+
+def get_ctecs_list(ctecs, continuing, last_ctec, last_term, current_subject):
+	last_ctec_found = False
+	ctecs_list = []
+
+	for ctec in ctecs:
+		current_term = ctec.find_elements_by_tag_name('td')[0].text
+		current_ctec = ctec.find_elements_by_tag_name('td')[1].text
+
+		if not continuing or last_ctec_found:
+			if current_subject in current_ctec:
+				ctecs_list.append(ctec.get_attribute('id'))
+
+		if continuing:
+			if last_ctec == current_ctec.replace(":", "") and last_term == current_term:
+				last_ctec_found = True
+				continuing = False
+
+	return ctecs_list
 
 def main():
 	try:
@@ -132,39 +108,6 @@ def main():
 		driver.get('http://www.northwestern.edu/caesar/')
 
 		wait = WebDriverWait(driver, delay)
-
-		current_career = "UGRD"
-
-	 	continuing = False
-
-		if os.stat(outfile).st_size > 0:
-			with open(outfile, 'r') as data:
-				data_reader = csv.reader(data, delimiter=',', quotechar='"')
-				# making sure the csv isn't just a header row
-				entries = 0
-
-				for row in data:
-					entries += 1
-					if entries > 1:
-						break
-
-				if entries > 1:
-					continuing = True
-
-					with open(outfile, 'rb') as csv_file:
-						last_row = get_last_row(outfile)
-						last_career = last_row[0]
-						last_subject = last_row[1]
-						last_course = last_row[2]
-						last_term = "{} {}".format(last_row[4], last_row[3])
-						last_ctec = "{} {}-{}-{} {}".format(last_row[5], last_row[7], last_row[8], last_row[9], last_row[10]).replace(":", "")
-
-					print "Picking up where we left off: {} {}".format(last_term, last_ctec)
-		else:
-			with open(outfile, 'a') as data:
-				writer = csv.writer(data, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-				writer.writerow(header)
-
 
 		print "Logging into Caesar"
 
@@ -190,8 +133,28 @@ def main():
 		wait.until(EC.presence_of_element_located((By.ID, 'ptifrmtgtframe')))
 		driver.switch_to.frame(driver.find_element_by_css_selector("#ptifrmtgtframe"))
 
+		current_career = "UGRD"
+
+		continuing = get_continuing(outfile)
 		if continuing:
+			with open(outfile, 'rb') as csv_file:
+				last_row = get_last_row(outfile)
+				last_career = last_row[0]
+				last_subject = last_row[1]
+				last_course = last_row[2]
+				last_term = "{} {}".format(last_row[4], last_row[3])
+				last_ctec = "{} {}-{}-{} {}".format(last_row[5], last_row[7], last_row[8], last_row[9], last_row[10]).replace(":", "")
+
+			print "Picking up where we left off: {} {}".format(last_term, last_ctec)
+
 			current_career = last_career
+		else:
+			last_row = None
+			last_career = None
+			last_subject = None
+			last_course = None
+			last_term = None
+			last_ctec = None
 
 		print "Filtering by {} courses".format(current_career)
 
@@ -213,19 +176,7 @@ def main():
 
 		academic_subjects = driver.find_element_by_css_selector('#NW_CT_PB_SRCH_SUBJECT')
 		subjects = academic_subjects.find_elements_by_tag_name('option')
-
-		subject_list = []
-
-		for subject in subjects:
-			subject_list.append(subject.get_attribute('value'))
-			# print subject.get_attribute('value')
-
-		# gets rid of the first select value, which is an empty entry
-		subject_list.pop(0)
-
-		if continuing:
-			while subject_list[0] != last_subject:
-				subject_list.pop(0)
+		subject_list = get_subject_list(subjects, continuing, last_subject)
 
 		current_subject = ""
 
@@ -259,19 +210,7 @@ def main():
 
 			subject_courses_table = driver.find_element_by_css_selector("[id^='NW_CT_PV_DRV']")
 			subject_courses = subject_courses_table.find_elements_by_css_selector('[id^="trNW_CT_PV_DRV"]')
-
-			subject_courses_list = []
-
-			last_row_found = False
-
-			for subject_course in subject_courses:
-				current_course = subject_course.find_element_by_css_selector('.PSEDITBOX_DISPONLY').text
-
-				if continuing:
-					if last_course == current_course:
-						last_row_found = True
-				if not continuing or last_row_found:
-					subject_courses_list.append(subject_course.get_attribute('id'))
+			subject_courses_list = get_course_list(subject_courses, continuing, last_course)
 
 			for subject_course_row in subject_courses_list:
 				time.sleep(pause)
@@ -291,22 +230,7 @@ def main():
 				ctecs_table = driver.find_element_by_css_selector("[id^='NW_CT_PV4_DRV']")
 				ctecs = ctecs_table.find_elements_by_css_selector('[id^="trNW_CT_PV4_DRV"]')
 
-				ctecs_list = []
-
-				last_ctec_found = False
-
-				for ctec in ctecs:
-					current_term = ctec.find_elements_by_tag_name('td')[0].text
-					current_ctec = ctec.find_elements_by_tag_name('td')[1].text
-
-					if not continuing or last_ctec_found:
-						if current_subject in current_ctec:
-							ctecs_list.append(ctec.get_attribute('id'))
-
-					if continuing:
-						if last_ctec == current_ctec.replace(":", "") and last_term == current_term:
-							last_ctec_found = True
-							continuing = False
+				ctecs_list = get_ctecs_list(ctecs, continuing, last_ctec, last_term, current_subject)
 
 				for ctec_id in ctecs_list:
 					while True:
@@ -592,5 +516,6 @@ def main():
 		print "Oops! Something went wrong. Restarting..."
 		driver.quit()
 		main()
+
 
 main()

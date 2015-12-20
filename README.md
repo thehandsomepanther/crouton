@@ -52,7 +52,7 @@ essay_responses
 
 All fields suffixed with `_rating` or `_survey` have multiple fields associated with them depending on how they are structured in the actual CTEC, e.g. the `instruction_rating` through `stimulating_rating` fields not only have the average rating of instruction for a class, but also the percentage of people who answered in each rating (1 - 6), as well as the response count for that particular question.
 
-`essay_responses` is just a huge block of text containing all the free responses students gave about the course. Individual comments are separated by a `\`.
+`essay_responses` is just a huge block of text containing all the free responses students gave about the course. Individual comments are separated by a `/`.
 
 The first three columns, `search_career`, `search_subject`, and `search_course` are just used by crouton to help it navigate through CTECs and pick up where it left off, mostly because of a few quirks in the way CTECs are organized that have to do with courses that have had their names or subjects changed. The same courses (and the same CTECs) can appear multiple times depending on whether their academic subject has been changed (e.g. the Hebrew courses used to be in AAL (Asian and African Languages) and are now in their own subject, HEBREW), but crouton will not add CTEC data to the spreadsheet unless the course title contains the search subject, so no duplicate CTECs should show up in the CSV.
 
