@@ -575,7 +575,7 @@ def main():
 								main()
 
 							time.sleep(pause)
-							print "\t\t\tOops! A little hiccup"
+							print "\t\t\tOops! A little hiccup. Trying again {} more times...".format(10 - timeouts)
 							pass
 
 		print "That's all folks!"

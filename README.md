@@ -19,7 +19,7 @@ netid = "net123"
 password = "P4$$.w0rd"
 ```
 
-## How The Data is Structured
+## How the Data are Structured
 Each row spans 96(!!) columns. Yeah, it's a doozy. In a nutshell, each row contains:
 
 ```
@@ -60,6 +60,6 @@ The first three columns, `search_career`, `search_subject`, and `search_course` 
 As of right now, crouton only knows how to either start from the very beginning and scrape every single undergrad CTEC if it's given an empty CSV to fill in or start from the last record of a CSV. I hope soon to incorporate all academic careers and make it possible to specify a range of careers, subjects, and even courses to scrape specifically.
 
 ## Disclaimer
-There are a lot of CTECs (read: A LOT OF CTECs), so this scraper will take a long time to run. It's also very possible (some might even say probable) that your browser will timeout or Selenium will throw a TimeoutException or the world will end or something. Another thing to be aware of is that not every NoSuchElementException is a real exception--sometimes it's just Caesar being slow. Luckily, crouton will be able to detect where you left off if your CSV already has some rows filled in.
+There are a lot of CTECs (read: A LOT OF CTECs), so this scraper will take a long time to run. It's also very possible (some might even say probable) that your browser will timeout or Selenium will throw a TimeoutException or the world will end or something. Another thing to be aware of is that not every NoSuchElementException is a real exception--sometimes it's just Caesar being slow. Luckily, crouton will automatically stop and restart if it hits one of these errors, and will be able to detect where you left off if your CSV already has some rows filled in.
 
 This is still a work in progress, so if you run into any issues while running this please let me know!
