@@ -8,6 +8,7 @@ from collections import deque
 
 from credentials import *
 from header import *
+from scrapers import *
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select, WebDriverWait
@@ -100,10 +101,12 @@ def get_ctecs_list(ctecs, continuing, last_ctec, last_term, current_subject):
 
 	return ctecs_list
 
-def main():
-	try:
-		timeouts = 0
 
+
+def main():
+	timeouts = 0
+
+	try:
 		driver = webdriver.Firefox()
 		driver.get('http://www.northwestern.edu/caesar/')
 
@@ -264,33 +267,7 @@ def main():
 							search_course = course_search_title
 
 							course_vitals = driver.find_elements_by_css_selector('.PSEDITBOX_DISPONLY')
-
-							# # e.g. Fall 2010
-							academic_term = course_vitals[0].text.split(' ')
-							academic_quarter = academic_term[0]
-							academic_year = academic_term[1]
-
-							# # e.g. HEBREW Hebrew
-							academic_subject = course_vitals[1].text
-							academic_subject_code = re.match(r'\S*', academic_subject).group(0)
-							academic_subject_full = re.search(r'\s.*', academic_subject).group().strip()
-
-							# # e.g. 111-2-20 Hebrew I
-							course_title = course_vitals[2].text.encode('utf-8')
-							course_full_number = re.match(r'\S*', course_title).group(0).split('-')
-							course_number = course_full_number[0]
-							course_subnum = course_full_number[1]
-							course_section = course_full_number[2]
-							course_name = re.search(r'\s(.*)', course_title).group().strip()
-
-							# e.g. Sarah Silverman
-							instructor = course_vitals[3].text
-
-							# number of peple who took the course
-							enrollment_count = int(course_vitals[4].text)
-
-							# number of people who filled out the CTEC
-							response_count = int(course_vitals[5].text)
+							vitals_list = scrape_course_vitals(course_vitals)
 
 							# Core Questions
 							core_questions_table = driver.find_element_by_xpath('//table[contains(@id, "ACE_NW_CTEC_M_QUESTION")]')
@@ -299,49 +276,7 @@ def main():
 							# initialize all responses to null in case there are no multiple choice questions
 							# previously for i in range(len(core_questions) - 1)
 							for i in range (0, 5):
-								question_rating_response = "null"
-								question_rating_average = "null"
-								question_rating_of_six_by_percent = "null"
-								question_rating_of_five_by_percent = "null"
-								question_rating_of_four_by_percent = "null"
-								question_rating_of_three_by_percent = "null"
-								question_rating_of_two_by_percent = "null"
-								question_rating_of_one_by_percent = "null"
-
-								try:
-									question_sections = core_questions[i].find_elements_by_tag_name('tr')
-									question_rating_response_average = question_sections[0].find_elements_by_tag_name('td')
-
-									question_rating_response = int(re.match(r'\S*', question_rating_response_average[1].find_element_by_tag_name('font').text).group(0))
-									question_rating_average = float(re.search(r'\s(\d*\.?\d*)$', question_rating_response_average[1].find_element_by_tag_name('font').text).group(0).strip())
-
-									question_rating_numbers_section = question_sections[1].find_element_by_tag_name('td')
-									question_rating_numbers = question_rating_numbers_section.find_elements_by_xpath('*')[1].find_elements_by_tag_name('div')
-
-									question_rating_of_six_by_percent = float(question_rating_numbers[0].text[:-1]) / 100
-									question_rating_of_five_by_percent = float(question_rating_numbers[1].text[:-1]) / 100
-									question_rating_of_four_by_percent = float(question_rating_numbers[2].text[:-1]) / 100
-									question_rating_of_three_by_percent = float(question_rating_numbers[3].text[:-1]) / 100
-									question_rating_of_two_by_percent = float(question_rating_numbers[4].text[:-1]) / 100
-									question_rating_of_one_by_percent = float(question_rating_numbers[5].text[:-1]) / 100
-								except ValueError:
-									# no response
-									pass
-								except NoSuchElementException:
-									pass
-								except IndexError:
-									pass
-
-								question_ratings = [
-									question_rating_response,
-									question_rating_average,
-									question_rating_of_one_by_percent,
-									question_rating_of_two_by_percent,
-									question_rating_of_three_by_percent,
-									question_rating_of_four_by_percent,
-									question_rating_of_five_by_percent,
-									question_rating_of_six_by_percent
-								]
+								question_ratings = scrape_core_questions(core_questions, i)
 
 								if i == 0:
 									instruction_rating = question_ratings
@@ -356,64 +291,27 @@ def main():
 
 							# Estimate the average number of hours per week you spent on this course outside of course and lab time
 							try:
-								time_survey = core_questions[5].find_element_by_tag_name('tr').find_elements_by_tag_name('td')
-								time_survey_ratings = time_survey[0].find_elements_by_xpath('*')[1].find_elements_by_tag_name('div')
-								time_rating_of_less_than_three = float(time_survey_ratings[0].text[:-1]) / 100
-								time_rating_of_four_to_seven = float(time_survey_ratings[1].text[:-1]) / 100
-								time_rating_of_eight_to_eleven = float(time_survey_ratings[2].text[:-1]) / 100
-								time_rating_of_twelve_to_fifteen = float(time_survey_ratings[3].text[:-1]) / 100
-								time_rating_of_sixteen_to_nineteen = float(time_survey_ratings[4].text[:-1]) / 100
-								time_rating_of_more_than_twenty = float(time_survey_ratings[5].text[:-1]) / 100
-								time_rating_response = int(re.match(r'\S*', time_survey[1].find_element_by_tag_name('font').text).group(0))
+								time_survey_section = core_questions[5]
 							except IndexError:
-								time_rating_of_less_than_three = "null"
-								time_rating_of_four_to_seven = "null"
-								time_rating_of_eight_to_eleven = "null"
-								time_rating_of_twelve_to_fifteen = "null"
-								time_rating_of_sixteen_to_nineteen = "null"
-								time_rating_of_more_than_twenty = "null"
-								time_rating_response = "null"
+								time_survey_section = False
 
-							time_rating = [
-								time_rating_response,
-								time_rating_of_less_than_three,
-								time_rating_of_four_to_seven,
-								time_rating_of_eight_to_eleven,
-								time_rating_of_twelve_to_fifteen,
-								time_rating_of_sixteen_to_nineteen,
-								time_rating_of_more_than_twenty
-							]
+							time_rating = scrape_time_survey(time_survey_section)
 
 							try:
 								essay_section = driver.find_element_by_xpath('//table[contains(@id, "ACE_NW_CTEC_COMMENTS")]')
 								essay_responses = essay_section.find_element_by_tag_name('p').text.encode('utf-8')
+								essay_responses = re.search(r'(\n\n).*', essay_responses).group(0).strip().replace('"', "'")
 							except NoSuchElementException:
 								essay_responses = ""
 
 							# Demographic Questions
 							demographic_questions_table = driver.find_element_by_xpath('//div[contains(@id, "win0divNW_CT_PVS_DRV_DESCRLONG")]').find_element_by_tag_name('table')
-							demographic_questions = demographic_questions_table.find_elements_by_css_selector('div > div > table > tbody > tr > td')
+							demographic_questions = demographic_questions_table.find_elements_by_tag_name('table')
 
-							for i in range(len(demographic_questions)):
-								survey = demographic_questions[i].find_elements_by_tag_name('tr')
-								demographic_responses = []
-
-								for j in range(1, len(survey)):
-									try:
-										val = int(survey[j].find_elements_by_tag_name('td')[1].text)
-									except ValueError as e:
-										val = float(survey[j].find_elements_by_tag_name('td')[1].text)
-
-									demographic_responses.append(val)
-
-								if i == 0:
-									school_survey = demographic_responses
-								elif i == 1:
-									class_survey = demographic_responses
-								elif i == 2:
-									reason_survey = demographic_responses
-								elif i == 3:
-									interest_survey = demographic_responses
+							school_survey = scrape_school_survey(demographic_questions[0])
+							class_survey = scrape_class_survey(demographic_questions[1])
+							reason_survey = scrape_reason_survey(demographic_questions[2])
+							interest_survey = scrape_interest_survey(demographic_questions[3])
 
 							#
 							# END ACTUAL DATA SCRAPING
@@ -421,7 +319,14 @@ def main():
 
 							with open(outfile, 'a') as data:
 
+								line = [
+									search_career,
+									search_subject,
+									search_course
+								]
+
 								compiled_ratings = [
+									vitals_list,
 									instruction_rating,
 									course_rating,
 									learned_rating,
@@ -434,29 +339,9 @@ def main():
 									interest_survey
 								]
 
-								line = [
-									search_career,
-									search_subject,
-									search_course,
-									academic_quarter,
-									academic_year,
-									academic_subject_code,
-									academic_subject_full,
-									course_number,
-									course_subnum,
-									course_section,
-									course_name,
-									instructor,
-									enrollment_count,
-									response_count
-								]
-
 								for rating in compiled_ratings:
 									for response in rating:
 										line.append(response)
-
-								if essay_responses:
-									essay_responses = re.search(r'(\n\n).*', essay_responses).group(0).strip().replace('"', "'")
 
 								line.append(essay_responses)
 
