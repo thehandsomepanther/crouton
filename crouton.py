@@ -101,8 +101,6 @@ def get_ctecs_list(ctecs, continuing, last_ctec, last_term, current_subject):
 
 	return ctecs_list
 
-
-
 def main():
 	timeouts = 0
 
@@ -235,6 +233,8 @@ def main():
 
 				ctecs_list = get_ctecs_list(ctecs, continuing, last_ctec, last_term, current_subject)
 
+				continuing = False
+
 				for ctec_id in ctecs_list:
 					while True:
 						try:
@@ -308,10 +308,25 @@ def main():
 							demographic_questions_table = driver.find_element_by_xpath('//div[contains(@id, "win0divNW_CT_PVS_DRV_DESCRLONG")]').find_element_by_tag_name('table')
 							demographic_questions = demographic_questions_table.find_elements_by_tag_name('table')
 
-							school_survey = scrape_school_survey(demographic_questions[0])
-							class_survey = scrape_class_survey(demographic_questions[1])
-							reason_survey = scrape_reason_survey(demographic_questions[2])
-							interest_survey = scrape_interest_survey(demographic_questions[3])
+							try:
+								school_survey = scrape_school_survey(demographic_questions[0])
+							except IndexError:
+								school_survey = scrape_school_survey()
+
+							try:
+								class_survey = scrape_class_survey(demographic_questions[1])
+							except IndexError:
+								class_survey = scrape_class_survey()
+
+							try:
+								reason_survey = scrape_reason_survey(demographic_questions[0])
+							except IndexError:
+								reason_survey = scrape_reason_survey()
+
+							try:
+								interest_survey = scrape_interest_survey(demographic_questions[0])
+							except IndexError:
+								interest_survey = scrape_interest_survey()	
 
 							#
 							# END ACTUAL DATA SCRAPING

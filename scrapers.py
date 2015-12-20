@@ -1,3 +1,6 @@
+import re
+from selenium import webdriver
+
 def scrape_course_vitals(course_vitals):
 	# # e.g. Fall 2010
 	academic_term = course_vitals[0].text.split(' ')
@@ -115,9 +118,7 @@ def scrape_time_survey(time_survey_section):
 		time_rating_of_more_than_twenty
 	]
 
-def scrape_school_survey(school_survey_section):
-	survey = school_survey_section.find_elements_by_tag_name('tr')
-
+def scrape_school_survey(school_survey_section = False):
 	school_survey_sesp = "null"
 	school_survey_comm = "null"
 	school_survey_grad = "null"
@@ -129,6 +130,25 @@ def scrape_school_survey(school_survey_section):
 	school_survey_scs = "null"
 	school_survey_wcas = "null"
 	school_survey_response = "null"
+
+	school_survey = [
+		school_survey_sesp,
+		school_survey_comm,
+		school_survey_grad,
+		school_survey_kgsm,
+		school_survey_mccormick,
+		school_survey_medill,
+		school_survey_music,
+		school_survey_summer,
+		school_survey_scs,
+		school_survey_wcas,
+		school_survey_response
+	]
+
+	if school_survey_section is False:
+		return school_survey
+
+	survey = school_survey_section.find_elements_by_tag_name('tr')
 
 	for i in range(1, len(survey)):
 		try:
@@ -161,23 +181,9 @@ def scrape_school_survey(school_survey_section):
 		elif "Total Response" in school:
 			school_survey_response = val
 
-	return [
-		school_survey_sesp,
-		school_survey_comm,
-		school_survey_grad,
-		school_survey_kgsm,
-		school_survey_mccormick,
-		school_survey_medill,
-		school_survey_music,
-		school_survey_summer,
-		school_survey_scs,
-		school_survey_wcas,
-		school_survey_response
-	]
+	return school_survey
 
-def scrape_class_survey(class_survey_section):
-	survey = class_survey_section.find_elements_by_tag_name('tr')
-
+def scrape_class_survey(class_survey_section = False):
 	class_survey_freshman = "null"
 	class_survey_sophomore = "null"
 	class_survey_junior = "null"
@@ -185,6 +191,21 @@ def scrape_class_survey(class_survey_section):
 	class_survey_grad = "null"
 	class_survey_other = "null"
 	class_survey_response = "null"
+
+	class_survey = [
+		class_survey_freshman,
+		class_survey_sophomore,
+		class_survey_junior,
+		class_survey_senior,
+		class_survey_grad,
+		class_survey_other,
+		class_survey_response
+	]
+
+	if class_survey_section is False:
+		return class_survey
+
+	survey = class_survey_section.find_elements_by_tag_name('tr')
 
 	for i in range(1, len(survey)):
 		try:
@@ -209,19 +230,9 @@ def scrape_class_survey(class_survey_section):
 		elif "Total Response" in class_response:
 			class_survey_response = val
 
-	return [
-		class_survey_freshman,
-		class_survey_sophomore,
-		class_survey_junior,
-		class_survey_senior,
-		class_survey_grad,
-		class_survey_other,
-		class_survey_response
-	]
+	return class_survey
 
-def scrape_reason_survey(reason_survey_section):
-	survey = reason_survey_section.find_elements_by_tag_name('tr')
-
+def scrape_reason_survey(reason_survey_section = False):
 	reason_survey_distro = "null"
 	reason_survey_major = "null"
 	reason_survey_minor = "null"
@@ -229,6 +240,21 @@ def scrape_reason_survey(reason_survey_section):
 	reason_survey_other = "null"
 	reason_survey_none = "null"
 	reason_survey_response = "null"
+
+	reason_survey = [
+		reason_survey_distro,
+		reason_survey_major,
+		reason_survey_minor,
+		reason_survey_elective,
+		reason_survey_other,
+		reason_survey_none,
+		reason_survey_response
+	]
+
+	if reason_survey_section is False:
+		return reason_survey
+
+	survey = reason_survey_section.find_elements_by_tag_name('tr')
 
 	for i in range(1, len(survey)):
 		try:
@@ -253,19 +279,9 @@ def scrape_reason_survey(reason_survey_section):
 		elif "Total Response" in reason:
 			reason_survey_response = val
 
-	return [
-		reason_survey_distro,
-		reason_survey_major,
-		reason_survey_minor,
-		reason_survey_elective,
-		reason_survey_other,
-		reason_survey_none,
-		reason_survey_response
-	]
+	return reason_survey
 
-def scrape_interest_survey(interest_survey_section):
-	survey = interest_survey_section.find_elements_by_tag_name('tr')
-
+def scrape_interest_survey(interest_survey_section = False):
 	interest_survey_rating_of_one = "null"
 	interest_survey_rating_of_two = "null"
 	interest_survey_rating_of_three = "null"
@@ -274,6 +290,22 @@ def scrape_interest_survey(interest_survey_section):
 	interest_survey_rating_of_six = "null"
 	interest_survey_response = "null"
 	interest_survey_average = "null"
+
+	interest_survey = [
+		interest_survey_rating_of_one,
+		interest_survey_rating_of_two,
+		interest_survey_rating_of_three,
+		interest_survey_rating_of_four,
+		interest_survey_rating_of_five,
+		interest_survey_rating_of_six,
+		interest_survey_response,
+		interest_survey_average
+	]
+
+	if interest_survey_section is False:
+		return interest_survey
+
+	survey = interest_survey_section.find_elements_by_tag_name('tr')
 
 	for i in range(1, len(survey)):
 		try:
@@ -300,13 +332,4 @@ def scrape_interest_survey(interest_survey_section):
 		elif "Average Response" in interest:
 			interest_survey_average = val
 
-	return [
-		interest_survey_rating_of_one,
-		interest_survey_rating_of_two,
-		interest_survey_rating_of_three,
-		interest_survey_rating_of_four,
-		interest_survey_rating_of_five,
-		interest_survey_rating_of_six,
-		interest_survey_response,
-		interest_survey_average
-	]
+	return interest_survey
