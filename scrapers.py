@@ -1,5 +1,6 @@
 import re
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 
 def scrape_course_vitals(course_vitals):
 	# # e.g. Fall 2010

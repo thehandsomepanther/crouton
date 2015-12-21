@@ -305,8 +305,14 @@ def main():
 								essay_responses = ""
 
 							# Demographic Questions
-							demographic_questions_table = driver.find_element_by_xpath('//div[contains(@id, "win0divNW_CT_PVS_DRV_DESCRLONG")]').find_element_by_tag_name('table')
-							demographic_questions = demographic_questions_table.find_elements_by_tag_name('table')
+							try:
+								demographic_questions_table = driver.find_element_by_xpath('//div[contains(@id, "win0divNW_CT_PVS_DRV_DESCRLONG")]').find_element_by_tag_name('table')
+								demographic_questions = demographic_questions_table.find_elements_by_tag_name('table')
+							except NoSuchElementException:
+								school_survey = scrape_school_survey()
+								class_survey = scrape_class_survey()
+								reason_survey = scrape_reason_survey()
+								interest_survey = scrape_interest_survey()
 
 							try:
 								school_survey = scrape_school_survey(demographic_questions[0])
@@ -319,14 +325,14 @@ def main():
 								class_survey = scrape_class_survey()
 
 							try:
-								reason_survey = scrape_reason_survey(demographic_questions[0])
+								reason_survey = scrape_reason_survey(demographic_questions[2])
 							except IndexError:
 								reason_survey = scrape_reason_survey()
 
 							try:
-								interest_survey = scrape_interest_survey(demographic_questions[0])
-							except IndexError:
-								interest_survey = scrape_interest_survey()	
+								interest_survey = scrape_interest_survey(demographic_questions[3])
+							except:
+								interest_survey = scrape_interest_survey()
 
 							#
 							# END ACTUAL DATA SCRAPING
