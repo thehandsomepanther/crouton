@@ -132,7 +132,41 @@ def scrape_school_survey(school_survey_section = False):
 	school_survey_wcas = "null"
 	school_survey_response = "null"
 
-	school_survey = [
+	if school_survey_section is not False:
+		survey = school_survey_section.find_elements_by_tag_name('tr')
+
+		for i in range(1, len(survey)):
+			try:
+				val = int(survey[i].find_elements_by_tag_name('td')[1].text)
+			except ValueError as e:
+				val = float(survey[i].find_elements_by_tag_name('td')[1].text)
+
+			school = survey[i].find_elements_by_tag_name('td')[0].text
+
+			if "Education & SP" in school:
+				school_survey_sesp = val
+			elif "Communication" in school:
+				school_survey_comm = val
+			elif "Graduate School" in school:
+				school_survey_grad = val
+			elif "KGSM" in school:
+				school_survey_kgsm = val
+			elif "McCormick" in school:
+				school_survey_mccormick = val
+			elif "Medill" in school:
+				school_survey_medill = val
+			elif "Music" in school:
+				school_survey_music = val
+			elif "Summer" in school:
+				school_survey_summer = val
+			elif "SCS" in school:
+				school_survey_scs = val
+			elif "WCAS" in school:
+				school_survey_wcas = val
+			elif "Total Response" in school:
+				school_survey_response = val
+
+	return [
 		school_survey_sesp,
 		school_survey_comm,
 		school_survey_grad,
@@ -146,44 +180,6 @@ def scrape_school_survey(school_survey_section = False):
 		school_survey_response
 	]
 
-	if school_survey_section is False:
-		return school_survey
-
-	survey = school_survey_section.find_elements_by_tag_name('tr')
-
-	for i in range(1, len(survey)):
-		try:
-			val = int(survey[i].find_elements_by_tag_name('td')[1].text)
-		except ValueError as e:
-			val = float(survey[i].find_elements_by_tag_name('td')[1].text)
-
-		school = survey[i].find_elements_by_tag_name('td')[0].text
-
-		if "Education & SP" in school:
-			school_survey_sesp = val
-		elif "Communication" in school:
-			school_survey_comm = val
-		elif "Graduate School" in school:
-			school_survey_grad = val
-		elif "KGSM" in school:
-			school_survey_kgsm = val
-		elif "McCormick" in school:
-			school_survey_mccormick = val
-		elif "Medill" in school:
-			school_survey_medill = val
-		elif "Music" in school:
-			school_survey_music = val
-		elif "Summer" in school:
-			school_survey_summer = val
-		elif "SCS" in school:
-			school_survey_scs = val
-		elif "WCAS" in school:
-			school_survey_wcas = val
-		elif "Total Response" in school:
-			school_survey_response = val
-
-	return school_survey
-
 def scrape_class_survey(class_survey_section = False):
 	class_survey_freshman = "null"
 	class_survey_sophomore = "null"
@@ -193,7 +189,34 @@ def scrape_class_survey(class_survey_section = False):
 	class_survey_other = "null"
 	class_survey_response = "null"
 
-	class_survey = [
+	if class_survey_section is not False:
+
+		survey = class_survey_section.find_elements_by_tag_name('tr')
+
+		for i in range(1, len(survey)):
+			try:
+				val = int(survey[i].find_elements_by_tag_name('td')[1].text)
+			except ValueError as e:
+				val = float(survey[i].find_elements_by_tag_name('td')[1].text)
+
+			class_response = survey[i].find_elements_by_tag_name('td')[0].text
+
+			if "Freshman" in class_response:
+				class_survey_freshman = val
+			elif "Sophomore" in class_response:
+				class_survey_sophomore = val
+			elif "Junior" in class_response:
+				class_survey_junior = val
+			elif "Senior" in class_response:
+				class_survey_senior = val
+			elif "Graduate" in class_response:
+				class_survey_grad = val
+			elif "Other" in class_response:
+				class_survey_other = val
+			elif "Total Response" in class_response:
+				class_survey_response = val
+
+	return [
 		class_survey_freshman,
 		class_survey_sophomore,
 		class_survey_junior,
@@ -202,36 +225,6 @@ def scrape_class_survey(class_survey_section = False):
 		class_survey_other,
 		class_survey_response
 	]
-
-	if class_survey_section is False:
-		return class_survey
-
-	survey = class_survey_section.find_elements_by_tag_name('tr')
-
-	for i in range(1, len(survey)):
-		try:
-			val = int(survey[i].find_elements_by_tag_name('td')[1].text)
-		except ValueError as e:
-			val = float(survey[i].find_elements_by_tag_name('td')[1].text)
-
-		class_response = survey[i].find_elements_by_tag_name('td')[0].text
-
-		if "Freshman" in class_response:
-			class_survey_freshman = val
-		elif "Sophomore" in class_response:
-			class_survey_sophomore = val
-		elif "Junior" in class_response:
-			class_survey_junior = val
-		elif "Senior" in class_response:
-			class_survey_senior = val
-		elif "Graduate" in class_response:
-			class_survey_grad = val
-		elif "Other" in class_response:
-			class_survey_other = val
-		elif "Total Response" in class_response:
-			class_survey_response = val
-
-	return class_survey
 
 def scrape_reason_survey(reason_survey_section = False):
 	reason_survey_distro = "null"
@@ -242,7 +235,34 @@ def scrape_reason_survey(reason_survey_section = False):
 	reason_survey_none = "null"
 	reason_survey_response = "null"
 
-	reason_survey = [
+	if reason_survey_section is not False:
+
+		survey = reason_survey_section.find_elements_by_tag_name('tr')
+
+		for i in range(1, len(survey)):
+			try:
+				val = int(survey[i].find_elements_by_tag_name('td')[1].text)
+			except ValueError as e:
+				val = float(survey[i].find_elements_by_tag_name('td')[1].text)
+
+			reason = survey[i].find_elements_by_tag_name('td')[0].text
+
+			if "Distribution" in reason:
+				reason_survey_distro = val
+			elif "Major" in reason:
+				reason_survey_major = val
+			elif "Minor" in reason:
+				reason_survey_minor = val
+			elif "Elective" in reason:
+				reason_survey_elective = val
+			elif "Other" in reason:
+				reason_survey_other = val
+			elif "No" in reason:
+				reason_survey_none = val
+			elif "Total Response" in reason:
+				reason_survey_response = val
+
+	return [
 		reason_survey_distro,
 		reason_survey_major,
 		reason_survey_minor,
@@ -251,36 +271,6 @@ def scrape_reason_survey(reason_survey_section = False):
 		reason_survey_none,
 		reason_survey_response
 	]
-
-	if reason_survey_section is False:
-		return reason_survey
-
-	survey = reason_survey_section.find_elements_by_tag_name('tr')
-
-	for i in range(1, len(survey)):
-		try:
-			val = int(survey[i].find_elements_by_tag_name('td')[1].text)
-		except ValueError as e:
-			val = float(survey[i].find_elements_by_tag_name('td')[1].text)
-
-		reason = survey[i].find_elements_by_tag_name('td')[0].text
-
-		if "Distribution" in reason:
-			reason_survey_distro = val
-		elif "Major" in reason:
-			reason_survey_major = val
-		elif "Minor" in reason:
-			reason_survey_minor = val
-		elif "Elective" in reason:
-			reason_survey_elective = val
-		elif "Other" in reason:
-			reason_survey_other = val
-		elif "No" in reason:
-			reason_survey_none = val
-		elif "Total Response" in reason:
-			reason_survey_response = val
-
-	return reason_survey
 
 def scrape_interest_survey(interest_survey_section = False):
 	interest_survey_rating_of_one = "null"
@@ -292,7 +282,36 @@ def scrape_interest_survey(interest_survey_section = False):
 	interest_survey_response = "null"
 	interest_survey_average = "null"
 
-	interest_survey = [
+	if interest_survey_section is not False:
+
+		survey = interest_survey_section.find_elements_by_tag_name('tr')
+
+		for i in range(1, len(survey)):
+			try:
+				val = int(survey[i].find_elements_by_tag_name('td')[1].text)
+			except ValueError as e:
+				val = float(survey[i].find_elements_by_tag_name('td')[1].text)
+
+			interest = survey[i].find_elements_by_tag_name('td')[0].text
+
+			if "1" in interest:
+				interest_survey_rating_of_one = val
+			elif "2" in interest:
+				interest_survey_rating_of_two = val
+			elif "3" in interest:
+				interest_survey_rating_of_three = val
+			elif "4" in interest:
+				interest_survey_rating_of_four = val
+			elif "5" in interest:
+				interest_survey_rating_of_five = val
+			elif "6" in interest:
+				interest_survey_rating_of_six = val
+			elif "Total Response" in interest:
+				interest_survey_response = val
+			elif "Average Response" in interest:
+				interest_survey_average = val
+
+	return [
 		interest_survey_rating_of_one,
 		interest_survey_rating_of_two,
 		interest_survey_rating_of_three,
@@ -302,35 +321,3 @@ def scrape_interest_survey(interest_survey_section = False):
 		interest_survey_response,
 		interest_survey_average
 	]
-
-	if interest_survey_section is False:
-		return interest_survey
-
-	survey = interest_survey_section.find_elements_by_tag_name('tr')
-
-	for i in range(1, len(survey)):
-		try:
-			val = int(survey[i].find_elements_by_tag_name('td')[1].text)
-		except ValueError as e:
-			val = float(survey[i].find_elements_by_tag_name('td')[1].text)
-
-		interest = survey[i].find_elements_by_tag_name('td')[0].text
-
-		if "1" in interest:
-			interest_survey_rating_of_one = val
-		elif "2" in interest:
-			interest_survey_rating_of_two = val
-		elif "3" in interest:
-			interest_survey_rating_of_three = val
-		elif "4" in interest:
-			interest_survey_rating_of_four = val
-		elif "5" in interest:
-			interest_survey_rating_of_five = val
-		elif "6" in interest:
-			interest_survey_rating_of_six = val
-		elif "Total Response" in interest:
-			interest_survey_response = val
-		elif "Average Response" in interest:
-			interest_survey_average = val
-
-	return interest_survey

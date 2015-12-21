@@ -305,34 +305,32 @@ def main():
 								essay_responses = ""
 
 							# Demographic Questions
+
+							school_survey = scrape_school_survey()
+							class_survey = scrape_class_survey()
+							reason_survey = scrape_reason_survey()
+							interest_survey = scrape_interest_survey()
+
 							try:
 								demographic_questions_table = driver.find_element_by_xpath('//div[contains(@id, "win0divNW_CT_PVS_DRV_DESCRLONG")]').find_element_by_tag_name('table')
 								demographic_questions = demographic_questions_table.find_elements_by_tag_name('table')
+
+								for demographic_question in demographic_questions:
+									survey = demographic_question.find_elements_by_tag_name('tr')
+									title = survey[0].find_element_by_tag_name('td').text
+
+									if "School" in title:
+										school_survey = scrape_school_survey(demographic_question)
+									elif "Class" in title:
+										class_survey = scrape_class_survey(demographic_question)
+									elif "reason" in title:
+										reason_survey = scrape_reason_survey(demographic_question)
+									elif "Interest" in title:
+										interest_survey = scrape_interest_survey(demographic_question)
+
 							except NoSuchElementException:
-								school_survey = scrape_school_survey()
-								class_survey = scrape_class_survey()
-								reason_survey = scrape_reason_survey()
-								interest_survey = scrape_interest_survey()
-
-							try:
-								school_survey = scrape_school_survey(demographic_questions[0])
-							except IndexError:
-								school_survey = scrape_school_survey()
-
-							try:
-								class_survey = scrape_class_survey(demographic_questions[1])
-							except IndexError:
-								class_survey = scrape_class_survey()
-
-							try:
-								reason_survey = scrape_reason_survey(demographic_questions[2])
-							except IndexError:
-								reason_survey = scrape_reason_survey()
-
-							try:
-								interest_survey = scrape_interest_survey(demographic_questions[3])
-							except:
-								interest_survey = scrape_interest_survey()
+								print "NoSuchElementException"
+								pass
 
 							#
 							# END ACTUAL DATA SCRAPING
