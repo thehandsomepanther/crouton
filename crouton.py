@@ -328,8 +328,7 @@ def main():
 									elif "Interest" in title:
 										interest_survey = scrape_interest_survey(demographic_question)
 
-							except NoSuchElementException:
-								print "NoSuchElementException"
+							except NoSuchElementException:k
 								pass
 
 							#
@@ -420,6 +419,9 @@ def main():
 		print "Oops! Something went wrong. Restarting..."
 		driver.quit()
 		main()
-
+	except IndexError:
+		print "Oops! Something went wrong. Restarting..."
+		driver.quit()
+		main()
 
 main()
