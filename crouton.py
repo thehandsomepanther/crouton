@@ -16,6 +16,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import ElementNotVisibleException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
@@ -102,8 +103,6 @@ def get_ctecs_list(ctecs, continuing, last_ctec, last_term, current_subject):
 	return ctecs_list
 
 def main():
-	timeouts = 0
-
 	try:
 		driver = webdriver.Firefox()
 		driver.get('http://www.northwestern.edu/caesar/')
@@ -328,7 +327,7 @@ def main():
 									elif "Interest" in title:
 										interest_survey = scrape_interest_survey(demographic_question)
 
-							except NoSuchElementException:k
+							except NoSuchElementException:
 								pass
 
 							#
@@ -394,16 +393,9 @@ def main():
 							break
 
 						except TimeoutException:
-							timeouts += 1
-
-							if timeouts > 9:
-								print "Hm. Something's not working. Let's try again."
-								driver.quit()
-								main()
-
-							time.sleep(pause)
-							print "\t\t\tOops! A little hiccup. Trying again {} more times...".format(10 - timeouts)
-							pass
+							print "Hm. Something's not working. Let's try again."
+							driver.quit()
+							main()
 
 		print "That's all folks!"
 		driver.quit()
@@ -420,6 +412,10 @@ def main():
 		driver.quit()
 		main()
 	except IndexError:
+		print "Oops! Something went wrong. Restarting..."
+		driver.quit()
+		main()
+	except ElementNotVisibleException:
 		print "Oops! Something went wrong. Restarting..."
 		driver.quit()
 		main()
