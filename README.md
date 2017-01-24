@@ -20,7 +20,7 @@ password = "P4$$.w0rd"
 ```
 
 ## How the Data are Structured
-Each row spans 95(!!) columns. Yeah, it's a doozy. In a nutshell, each row contains:
+Each row spans 95(!!) columns. Yeah, it's a doozie. In a nutshell, each row contains:
 
 ```
 search_career
